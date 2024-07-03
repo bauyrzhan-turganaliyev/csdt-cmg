@@ -986,7 +986,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gameConfig: {fileID: 11400000, guid: b854cdc9aef3377489abf6ed50d892fc, type: 2}
   _gridView: {fileID: 258870431}
-  matchCardViewPrefab: {fileID: 8443885937063412532, guid: b38f554174481254487a950fbc4be497, type: 3}
+  cardViewPrefab: {fileID: 8443885937063412532, guid: b38f554174481254487a950fbc4be497, type: 3}
 --- !u!114 &796641871
 MonoBehaviour:
   m_ObjectHideFlags: 0

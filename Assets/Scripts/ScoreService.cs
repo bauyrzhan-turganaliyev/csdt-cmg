@@ -1,3 +1,4 @@
+using System;
 using Infrastructure;
 using UnityEngine;
 
@@ -13,7 +14,8 @@ public class ScoreService : MonoBehaviour
     {
         _messageBus = messageBus;
         _playerProgress = playerProgress;
-        
+
+        SetupAllViews();
         Subscribe();
     }
 
@@ -21,6 +23,12 @@ public class ScoreService : MonoBehaviour
     {
         _messageBus.OnCardFlip += AddCardFlip;
         _messageBus.OnCheckMatch += CheckMatch;
+    }
+
+    private void OnDestroy()
+    {
+        _messageBus.OnCardFlip -= AddCardFlip;
+        _messageBus.OnCheckMatch -= CheckMatch;
     }
 
     private void CheckMatch(bool isMatch)
@@ -41,10 +49,16 @@ public class ScoreService : MonoBehaviour
 
     private void AddCardFlip()
     {
-        if (_playerProgress != null && _playerProgress.ScoreData != null)
-        {
-            _playerProgress.ScoreData.Flips++;
-            _scoreView.SetFlips(_playerProgress.ScoreData.Flips);
-        }
+        if (_playerProgress == null || _playerProgress.ScoreData == null) return;
+        
+        _playerProgress.ScoreData.Flips++;
+        _scoreView.SetFlips(_playerProgress.ScoreData.Flips);
+    }
+    
+    private void SetupAllViews()
+    {
+        _scoreView.SetScore(_playerProgress.ScoreData.Score);
+        _scoreView.SetFlips(_playerProgress.ScoreData.Flips);
+        _scoreView.SetCombo(_playerProgress.ScoreData.Combo);
     }
 }

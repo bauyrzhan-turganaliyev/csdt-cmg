@@ -1,4 +1,5 @@
 using System;
+using SaveLoad;
 using UnityEngine;
 
 namespace Infrastructure
@@ -12,11 +13,17 @@ namespace Infrastructure
 
         private void Awake()
         {
-            _playerProgress = new PlayerProgress();
+            _playerProgress = SaveLoadService.LoadProgress() ?? new PlayerProgress();
             _messageBus = new MessageBus();
+            _messageBus.OnForceQuit += SaveProgress;
             
-            _gameController.Init(_messageBus);
+            _gameController.Init(_messageBus, _playerProgress);
             _scoreService.Init(_messageBus, _playerProgress);
+        }
+
+        private void SaveProgress()
+        {
+            SaveLoadService.SaveProgress(_playerProgress);
         }
     }
 }

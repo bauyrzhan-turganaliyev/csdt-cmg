@@ -6,5 +6,6 @@ namespace Infrastructure
     {
         public Action OnCardFlip;
         public Action<bool> OnCheckMatch;
+        public Action OnForceQuit;
     }
 }

@@ -8,29 +8,30 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
     [SerializeField] private GridService _gridService;
-    private List<MatchCardView> _openCards = new List<MatchCardView>();
+    private List<CardView> _openCards = new List<CardView>();
     private int pairsFound = 0;
     private int totalPairs;
+    
     private MessageBus _messageBus;
 
-    public void Init(MessageBus messageBus)
+    public void Init(MessageBus messageBus, PlayerProgress playerProgress)
     {
         _messageBus = messageBus;
-        
-        _gridService.Init();
+
+        _gridService.Init(messageBus, playerProgress);
         SubscribeToCardClicks();
         totalPairs = _gridService.GetTotalPairs();
     }
 
     private void SubscribeToCardClicks()
     {
-        foreach (MatchCardView card in _gridService.GetAllCards())
+        foreach (CardView card in _gridService.GetAllCards())
         {
             card.OnClick += () => OnCardClicked(card);
         }
     }
 
-    private void OnCardClicked(MatchCardView clickedCard)
+    private void OnCardClicked(CardView clickedCard)
     {
         if (_openCards.Contains(clickedCard))
             return;

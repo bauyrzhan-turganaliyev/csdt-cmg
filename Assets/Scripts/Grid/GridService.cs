@@ -1,19 +1,36 @@
 using System;
 using System.Collections.Generic;
 using Configs;
+using Cysharp.Threading.Tasks;
+using Infrastructure;
+using TMPro.EditorUtilities;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GridService : MonoBehaviour
 {
     [SerializeField] private GameConfig _gameConfig;
     [SerializeField] private GridView _gridView;
-    [SerializeField] private MatchCardView matchCardViewPrefab;
-    private List<MatchCardView> _cards;
+    [SerializeField] private CardView cardViewPrefab;
+    
+    private List<CardView> _cards;
+    private List<int> _contentIndexes;
+    
+    private PlayerProgress _playerProgress;
+    private MessageBus _messageBus;
 
-    public void Init()
+    public async void Init(MessageBus messageBus, PlayerProgress playerProgress)
     {
-        _cards = new List<MatchCardView>();
-        GenerateGrid();
+        _messageBus = messageBus;
+        _playerProgress = playerProgress;
+        
+        _cards = new List<CardView>();
+        _contentIndexes = new List<int>();
+
+        //await UniTask.Delay(2000);
+        
+        LoadGridData();
+        //GenerateGrid();
     }
 
     private void GenerateGrid()
@@ -53,7 +70,12 @@ public class GridService : MonoBehaviour
 
         for (int i = 0; i < pairsCount; i++)
         {
-            T value = pool[i % pool.Length];
+            int contentIndex = i % pool.Length;
+            T value = pool[contentIndex];
+            
+            _contentIndexes.Add(contentIndex);
+            _contentIndexes.Add(contentIndex);
+            
             cardValues.Add(value);
             cardValues.Add(value);
         }
@@ -62,6 +84,7 @@ public class GridService : MonoBehaviour
         {
             int randomIndex = UnityEngine.Random.Range(0, cardValues.Count);
             (cardValues[i], cardValues[randomIndex]) = (cardValues[randomIndex], cardValues[i]);
+            (_contentIndexes[i], _contentIndexes[randomIndex]) = (_contentIndexes[randomIndex], _contentIndexes[i]);
         }
 
         return cardValues.ToArray();
@@ -71,13 +94,66 @@ public class GridService : MonoBehaviour
     {
         for (int i = 0; i < cardsCount; i++)
         {
-            MatchCardView cardView = Instantiate(matchCardViewPrefab, cardsParent);
+            CardView cardView = Instantiate(cardViewPrefab, cardsParent);
             cardView.Init(values[i]);
             _cards.Add(cardView);
         }
     }
-    
-    public List<MatchCardView> GetAllCards()
+    private void InitCards2<T>(T[] values, Transform cardsParent, int cardsCount)
+    {
+        for (int i = 0; i < cardsCount; i++)
+        {
+            CardView cardView = Instantiate(cardViewPrefab, cardsParent);
+            cardView.Init(values[_playerProgress.GridData.cards[i].contentIndex]);
+            if (_playerProgress.GridData.cards[i].isMatched)
+            {
+                cardView.ReverseIsFront();
+                cardView.FlipCard();
+                cardView.DisableCard();
+            }
+            _cards.Add(cardView);
+            _contentIndexes.Add(_playerProgress.GridData.cards[i].contentIndex);
+        }
+    }
+    public void LoadGridData()
+    {
+        if (_playerProgress.ScoreData.Flips == 0)
+        {
+            Debug.LogError("Save data not found!");
+            GenerateGrid();
+            return;
+        }
+        _gameConfig.GridWidth = _playerProgress.GridData.width;
+        _gameConfig.GridHeight = _playerProgress.GridData.height;
+
+        foreach (Transform child in _gridView.GetCardsParent())
+        {
+            Destroy(child.gameObject);
+        }
+
+        _cards.Clear();
+        
+        Transform cardsParent = _gridView.GetCardsParent();
+        int cardsCount = _gameConfig.GridWidth * _gameConfig.GridHeight;
+        switch (_playerProgress.GridData.PoolType)
+        {
+            case PoolType.Colors:
+                InitCards2(_gameConfig.Pool.Colors, cardsParent, cardsCount);
+                break;
+            case PoolType.Sprites:
+                InitCards2(_gameConfig.Pool.Sprites, cardsParent, cardsCount);
+                break;
+            case PoolType.Symbols:
+                InitCards2(_gameConfig.Pool.Symbols, cardsParent, cardsCount);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }       
+
+        _gridView.SetupFixedWidth(_gameConfig.GridWidth);
+        Debug.Log("Grid data loaded.");
+    }
+    public List<CardView> GetAllCards()
     {
         return _cards;
     }
@@ -86,5 +162,32 @@ public class GridService : MonoBehaviour
     {
         int cardsCount = _gameConfig.GridWidth * _gameConfig.GridHeight;
         return cardsCount / 2;
+    }
+
+    private void OnApplicationQuit()
+    {
+        _playerProgress.GridData = new GridData()
+        {
+            width = _gameConfig.GridWidth,
+            height = _gameConfig.GridHeight,
+            PoolType = _gameConfig.PoolType,
+            cards = new List<CardData>()
+        };
+
+        for (int i = 0; i < _cards.Count; i++)
+        {
+            _playerProgress.GridData.cards.Add(new CardData()
+            {
+                isMatched = _cards[i].IsMatched(),
+                contentIndex = _contentIndexes[i],
+            });
+        }
+        
+        _messageBus.OnForceQuit?.Invoke();
+        
+        /*
+        string json = JsonUtility.ToJson(_playerProgress.GridData);
+        PlayerPrefs.SetString("GridData", json);
+        PlayerPrefs.Save();*/
     }
 }
