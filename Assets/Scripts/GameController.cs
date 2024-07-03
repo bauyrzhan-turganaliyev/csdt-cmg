@@ -1,19 +1,21 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
     [SerializeField] private GridService _gridService;
     private List<MatchCardView> _openCards = new List<MatchCardView>();
-    private int _totalPairs;
-    private int _pairsFound;
+    private int pairsFound = 0;
+    private int totalPairs;
 
     public void Init()
     {
         _gridService.Init();
         SubscribeToCardClicks();
-        _totalPairs = _gridService.GetTotalPairs();
+        totalPairs = _gridService.GetTotalPairs();
     }
 
     private void SubscribeToCardClicks()
@@ -56,24 +58,24 @@ public class GameController : MonoBehaviour
     private IEnumerator CheckForMatch()
     {
         if (_openCards[0].GetValue().Equals(_openCards[1].GetValue()))
-        { 
+        {
             _openCards[0].DisableCard();
             _openCards[1].DisableCard();
-            _pairsFound++;
+            pairsFound++;
             CheckForWin();
         }
         else
         {
-            yield return new WaitForSeconds(2);
+            yield return new WaitForSeconds(2); // Дождитесь завершения анимации несоответствия
             CloseOpenCards();
         }
 
         _openCards.Clear();
     }
-    
+
     private void CheckForWin()
     {
-        if (_pairsFound == _totalPairs)
+        if (pairsFound == totalPairs)
         {
             Debug.Log("You win!");
             // Здесь можно добавить любую логику, которая должна выполняться при победе

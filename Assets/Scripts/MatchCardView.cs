@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -43,7 +44,7 @@ public class MatchCardView : MonoBehaviour
     private void OnClicked()
     {
         if (isFlipping) return;
-        StartCoroutine(FlipCard());
+        FlipCard();
         OnClick?.Invoke();
     }
 
@@ -56,66 +57,38 @@ public class MatchCardView : MonoBehaviour
     {
         if (!isFront)
         {
-            StartCoroutine(FlipCard());
+            FlipCard();
         }
     }
 
-    private IEnumerator FlipCard()
+    private void FlipCard()
     {
         isFlipping = true;
 
-        Quaternion startRotation = transform.rotation;
-        Quaternion endRotation = startRotation * Quaternion.Euler(0, 180, 0);
-
-        float time = 0;
-        while (time < 1)
-        {
-            time += Time.deltaTime * 2; // Скорость переворота
-            transform.rotation = Quaternion.Lerp(startRotation, endRotation, time);
-            if (time >= 0.5f && time < 0.55f) // Переключение сторон на полпути переворота
-            {
-                isFront = !isFront;
-                _frontSide.SetActive(!isFront);
-                _backSide.SetActive(isFront);
-            }
-            yield return null;
-        }
-
-        transform.rotation = endRotation; // Убедитесь, что карта полностью перевернута
-
-        isFlipping = false;
+        Sequence flipSequence = DOTween.Sequence();
+        flipSequence.Append(transform.DORotate(new Vector3(0, 90, 0), 0.25f))
+                     .AppendCallback(() =>
+                     {
+                         isFront = !isFront;
+                         _frontSide.SetActive(!isFront);
+                         _backSide.SetActive(isFront);
+                     })
+                     .Append(transform.DORotate(new Vector3(0, 180, 0), 0.25f))
+                     .AppendCallback(() => isFlipping = false);
     }
 
     public void HideCard()
     {
-        if (isFlipping) return;
-        StartCoroutine(FlipCardBack());
-    }
-
-    private IEnumerator FlipCardBack()
-    {
-        isFlipping = true;
-
-        Quaternion startRotation = transform.rotation;
-        Quaternion endRotation = startRotation * Quaternion.Euler(0, -180, 0);
-
-        float time = 0;
-        while (time < 1)
-        {
-            time += Time.deltaTime * 2; // Скорость переворота
-            transform.rotation = Quaternion.Lerp(startRotation, endRotation, time);
-            if (time >= 0.5f && time < 0.55f) // Переключение сторон на полпути переворота
-            {
-                isFront = !isFront;
-                _frontSide.SetActive(!isFront);
-                _backSide.SetActive(isFront);
-            }
-            yield return null;
-        }
-
-        transform.rotation = endRotation; // Убедитесь, что карта полностью перевернута
-
-        isFlipping = false;
+        Sequence flipBackSequence = DOTween.Sequence();
+        flipBackSequence.Append(transform.DORotate(new Vector3(0, 90, 0), 0.25f))
+                        .AppendCallback(() =>
+                        {
+                            isFront = !isFront;
+                            _frontSide.SetActive(!isFront);
+                            _backSide.SetActive(isFront);
+                        })
+                        .Append(transform.DORotate(new Vector3(0, 0, 0), 0.25f))
+                        .AppendCallback(() => isFlipping = false);
     }
 
     public void DisableCard()
