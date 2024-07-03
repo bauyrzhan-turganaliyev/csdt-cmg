@@ -8,9 +8,11 @@ public class GridService : MonoBehaviour
     [SerializeField] private GameConfig _gameConfig;
     [SerializeField] private GridView _gridView;
     [SerializeField] private MatchCardView matchCardViewPrefab;
+    private List<MatchCardView> _cards;
 
     public void Init()
     {
+        _cards = new List<MatchCardView>();
         GenerateGrid();
     }
 
@@ -71,6 +73,18 @@ public class GridService : MonoBehaviour
         {
             MatchCardView cardView = Instantiate(matchCardViewPrefab, cardsParent);
             cardView.Init(values[i]);
+            _cards.Add(cardView);
         }
+    }
+    
+    public List<MatchCardView> GetAllCards()
+    {
+        return _cards;
+    }
+    
+    public int GetTotalPairs()
+    {
+        int cardsCount = _gameConfig.GridWidth * _gameConfig.GridHeight;
+        return cardsCount / 2;
     }
 }

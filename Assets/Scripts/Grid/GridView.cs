@@ -5,7 +5,7 @@ public class GridView : MonoBehaviour
 {
     [SerializeField] private GridLayoutGroup _gridLayoutGroup;
     [SerializeField] private RectTransform _cardsParent;
-    //[SerializeField] private float _maxCellSize = 150f;
+    [SerializeField] private float _maxCellSize = 250;
 
     private void Start()
     {
@@ -45,7 +45,8 @@ public class GridView : MonoBehaviour
 
         float cellSize = Mathf.Min(cellSizeWidth, cellSizeHeight);
         
-        //cellSize = Mathf.Min(cellSize, _maxCellSize);
+        if (_maxCellSize > 100)
+            cellSize = Mathf.Min(cellSize, _maxCellSize);
 
         _gridLayoutGroup.cellSize = new Vector2(cellSize, cellSize);
     }

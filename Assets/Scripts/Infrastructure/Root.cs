@@ -5,11 +5,11 @@ namespace Infrastructure
 {
     public class Root : MonoBehaviour
     {
-        [SerializeField] private GridService _gridService;
+        [SerializeField] private GameController _gameController;
         
         private void Awake()
         {
-            _gridService.Init();
+            _gameController.Init();
         }
     }
 }
