@@ -67,7 +67,7 @@ public class MatchCardView : MonoBehaviour
 
         Sequence flipSequence = DOTween.Sequence();
         flipSequence.Append(transform.DORotate(new Vector3(0, 90, 0), 0.25f))
-                     .AppendCallback(() =>
+                     .AppendCallback(() => 
                      {
                          isFront = !isFront;
                          _frontSide.SetActive(!isFront);

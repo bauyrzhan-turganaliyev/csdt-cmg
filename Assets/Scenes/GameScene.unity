@@ -319,6 +319,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gridLayoutGroup: {fileID: 258870428}
   _cardsParent: {fileID: 258870426}
+  _maxCellSize: 250
 --- !u!1 &304959484
 GameObject:
   m_ObjectHideFlags: 0
@@ -601,7 +602,7 @@ GameObject:
   - component: {fileID: 381131342}
   - component: {fileID: 381131341}
   m_Layer: 5
-  m_Name: TurnsText
+  m_Name: FlipsText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -647,7 +648,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Turns
+  m_text: Flips
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -733,8 +734,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 414294458}
+  - component: {fileID: 414294459}
   m_Layer: 5
-  m_Name: TextInfo
+  m_Name: ScoreView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -762,6 +764,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 590.2, y: 861.3146}
   m_Pivot: {x: 0.5, y: 1}
+--- !u!114 &414294459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 414294457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae8664f86ec34d019d54b3e4c200f352, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _scoreText: {fileID: 354829468}
+  _flipText: {fileID: 479396269}
+  _comboText: {fileID: 1865406760}
 --- !u!1 &479396267
 GameObject:
   m_ObjectHideFlags: 0
@@ -774,7 +791,7 @@ GameObject:
   - component: {fileID: 479396270}
   - component: {fileID: 479396269}
   m_Layer: 5
-  m_Name: Turns
+  m_Name: Flips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -946,6 +963,8 @@ GameObject:
   - component: {fileID: 796641872}
   - component: {fileID: 796641871}
   - component: {fileID: 796641870}
+  - component: {fileID: 796641873}
+  - component: {fileID: 796641874}
   m_Layer: 0
   m_Name: SERVICES
   m_TagString: Untagged
@@ -980,7 +999,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 486653b80042206428364cb56005969a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gridService: {fileID: 796641870}
+  _gameController: {fileID: 796641873}
+  _scoreService: {fileID: 796641874}
 --- !u!4 &796641872
 Transform:
   m_ObjectHideFlags: 0
@@ -996,6 +1016,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &796641873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 796641869}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbf7bbaaa5794c35af41fabd3a3e7811, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gridService: {fileID: 796641870}
+--- !u!114 &796641874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 796641869}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ac743a0a84e41aeb30980e10b3f0cc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _scoreView: {fileID: 414294459}
 --- !u!1 &823271059
 GameObject:
   m_ObjectHideFlags: 0

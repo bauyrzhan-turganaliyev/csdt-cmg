@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Infrastructure;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
@@ -10,9 +11,12 @@ public class GameController : MonoBehaviour
     private List<MatchCardView> _openCards = new List<MatchCardView>();
     private int pairsFound = 0;
     private int totalPairs;
+    private MessageBus _messageBus;
 
-    public void Init()
+    public void Init(MessageBus messageBus)
     {
+        _messageBus = messageBus;
+        
         _gridService.Init();
         SubscribeToCardClicks();
         totalPairs = _gridService.GetTotalPairs();
@@ -31,6 +35,8 @@ public class GameController : MonoBehaviour
         if (_openCards.Contains(clickedCard))
             return;
 
+        _messageBus.OnCardFlip?.Invoke();
+        
         if (_openCards.Count == 2)
         {
             CloseOpenCards();
@@ -63,9 +69,11 @@ public class GameController : MonoBehaviour
             _openCards[1].DisableCard();
             pairsFound++;
             CheckForWin();
+            _messageBus.OnCheckMatch?.Invoke(true);
         }
         else
         {
+            _messageBus.OnCheckMatch?.Invoke(false);
             yield return new WaitForSeconds(2); // Дождитесь завершения анимации несоответствия
             CloseOpenCards();
         }
