@@ -16,8 +16,6 @@ public class GridService : MonoBehaviour
 
     private void GenerateGrid()
     {
-        _gridView.SetupFixedWidth(_gameConfig.GridWidth);
-
         Transform cardsParent = _gridView.GetCardsParent();
         int cardsCount = _gameConfig.GridWidth * _gameConfig.GridHeight;
         switch (_gameConfig.PoolType)
@@ -36,7 +34,9 @@ public class GridService : MonoBehaviour
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
-        }
+        }       
+        
+        _gridView.SetupFixedWidth(_gameConfig.GridWidth);
     }
 
     private T[] GenerateCardValues<T>(T[] pool, int cardsCount)

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ab2fe3c2e014c97ab2b8612bc6ef9ad, type: 3}
   m_Name: Configs
   m_EditorClassIdentifier: 
-  GridWidth: 5
-  GridHeight: 6
+  GridWidth: 10
+  GridHeight: 10
   PoolType: 1
   Pool:
     Colors:
@@ -26,7 +26,7 @@ MonoBehaviour:
     - {r: 0, g: 1, b: 0.3940034, a: 1}
     - {r: 0.7842221, g: 1, b: 0, a: 1}
     - {r: 1, g: 0.7092401, b: 0, a: 1}
-    - {r: 0.509434, g: 0.509434, b: 0.509434, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
     Sprites:
     - {fileID: 21300000, guid: d2ec760255d976a40aa9ef3c382a11ce, type: 3}
     - {fileID: 21300000, guid: 194b43af1899eb54dbaa9bef7d4b05d0, type: 3}

@@ -37,8 +37,8 @@ namespace Configs
             GameConfig gameConfig = (GameConfig)target;
 
             EditorGUILayout.LabelField("Grid Settings", EditorStyles.boldLabel);
-            gameConfig.GridWidth = EditorGUILayout.IntSlider("Grid Width", gameConfig.GridWidth, 1, 6);
-            gameConfig.GridHeight = EditorGUILayout.IntSlider("Grid Height", gameConfig.GridHeight, 1, 6);
+            gameConfig.GridWidth = EditorGUILayout.IntSlider("Grid Width", gameConfig.GridWidth, 1, 10);
+            gameConfig.GridHeight = EditorGUILayout.IntSlider("Grid Height", gameConfig.GridHeight, 1, 10);
 
             if ((gameConfig.GridWidth * gameConfig.GridHeight) % 2 != 0)
             {
