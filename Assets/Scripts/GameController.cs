@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using Infrastructure;
 using UnityEngine;
@@ -8,19 +9,34 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
     [SerializeField] private GridService _gridService;
-    private List<CardView> _openCards = new List<CardView>();
-    private int pairsFound = 0;
-    private int totalPairs;
+    private readonly List<CardView> _openCards = new List<CardView>();
+    private int _pairsFound = 0;
+    private int _totalPairs;
     
     private MessageBus _messageBus;
+    private PlayerProgress _playerProgress;
 
     public void Init(MessageBus messageBus, PlayerProgress playerProgress)
     {
         _messageBus = messageBus;
+        _playerProgress = playerProgress;
 
-        _gridService.Init(messageBus, playerProgress);
+        _gridService.Init(_messageBus, _playerProgress);
+        
+        SetupGameData();
+    }
+
+    private void SetupGameData()
+    {
         SubscribeToCardClicks();
-        totalPairs = _gridService.GetTotalPairs();
+
+        _totalPairs = _gridService.GetTotalPairs();
+
+        if (_playerProgress.HasProgress)
+        {
+            var allMatchedCardsCount = _playerProgress.GridData.cards.Count(t => t.isMatched);
+            _pairsFound = allMatchedCardsCount / 2;
+        }
     }
 
     private void SubscribeToCardClicks()
@@ -68,14 +84,14 @@ public class GameController : MonoBehaviour
         {
             _openCards[0].DisableCard();
             _openCards[1].DisableCard();
-            pairsFound++;
+            _pairsFound++;
             CheckForWin();
             _messageBus.OnCheckMatch?.Invoke(true);
         }
         else
         {
             _messageBus.OnCheckMatch?.Invoke(false);
-            yield return new WaitForSeconds(2); // Дождитесь завершения анимации несоответствия
+            yield return new WaitForSeconds(2);
             CloseOpenCards();
         }
 
@@ -84,10 +100,12 @@ public class GameController : MonoBehaviour
 
     private void CheckForWin()
     {
-        if (pairsFound == totalPairs)
+        if (_pairsFound == _totalPairs)
         {
-            Debug.Log("You win!");
-            // Здесь можно добавить любую логику, которая должна выполняться при победе
+            FlagsStorage.IsAbleToSave = false;
+            
+            _messageBus.OnClearProgress?.Invoke();
+            _messageBus.OnGameOver?.Invoke(true);
         }
     }
 }

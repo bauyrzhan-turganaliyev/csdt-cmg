@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1ab2fe3c2e014c97ab2b8612bc6ef9ad, type: 3}
-  m_Name: Configs
+  m_Name: GameConfigs
   m_EditorClassIdentifier: 
   GridWidth: 10
   GridHeight: 10

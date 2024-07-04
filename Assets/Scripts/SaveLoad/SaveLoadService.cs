@@ -8,11 +8,10 @@ namespace SaveLoad
     {
         private const string ProgressKey = "Progress";
 
-        public static async UniTaskVoid SaveProgress(PlayerProgress playerProgress)
+        public static void SaveProgress(PlayerProgress playerProgress)
         {
             PlayerPrefs.SetString(ProgressKey, playerProgress.ToJson());
             PlayerPrefs.Save();
-            await UniTask.CompletedTask;
         }
 
         public static PlayerProgress LoadProgress()
@@ -20,6 +19,11 @@ namespace SaveLoad
             var stringProgress = PlayerPrefs.GetString(ProgressKey);
             var progress = stringProgress.ToDeserialized<PlayerProgress>();
             return progress;
+        }
+
+        public static void ResetProgress()
+        {
+            PlayerPrefs.DeleteKey(ProgressKey);
         }
     }
 }

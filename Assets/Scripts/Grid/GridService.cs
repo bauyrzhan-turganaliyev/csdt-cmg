@@ -19,25 +19,34 @@ public class GridService : MonoBehaviour
     private PlayerProgress _playerProgress;
     private MessageBus _messageBus;
 
-    public async void Init(MessageBus messageBus, PlayerProgress playerProgress)
+    public void Init(MessageBus messageBus, PlayerProgress playerProgress)
     {
         _messageBus = messageBus;
         _playerProgress = playerProgress;
+
+        Subscribe();
         
         _cards = new List<CardView>();
         _contentIndexes = new List<int>();
-
-        //await UniTask.Delay(2000);
         
         LoadGridData();
-        //GenerateGrid();
+    }
+
+    private void Subscribe()
+    {
+        _messageBus.OnForceSaveGameData += Save;
+    }
+
+    private void OnDestroy()
+    {
+        _messageBus.OnForceSaveGameData -= Save;
     }
 
     private void GenerateGrid()
     {
         Transform cardsParent = _gridView.GetCardsParent();
-        int cardsCount = _gameConfig.GridWidth * _gameConfig.GridHeight;
-        switch (_gameConfig.PoolType)
+        int cardsCount = _playerProgress.GridData.width * _playerProgress.GridData.height;
+        switch (_playerProgress.GridData.PoolType)
         {
             case PoolType.Colors:
                 var colorValues = GenerateCardValues(_gameConfig.Pool.Colors, cardsCount);
@@ -55,7 +64,7 @@ public class GridService : MonoBehaviour
                 throw new ArgumentOutOfRangeException();
         }       
         
-        _gridView.SetupFixedWidth(_gameConfig.GridWidth);
+        _gridView.SetupFixedWidth(_playerProgress.GridData.width);
     }
 
     private T[] GenerateCardValues<T>(T[] pool, int cardsCount)
@@ -115,17 +124,14 @@ public class GridService : MonoBehaviour
             _contentIndexes.Add(_playerProgress.GridData.cards[i].contentIndex);
         }
     }
-    public void LoadGridData()
+    private void LoadGridData()
     {
-        if (_playerProgress.ScoreData.Flips == 0)
+        if (!_playerProgress.HasProgress)
         {
-            Debug.LogError("Save data not found!");
             GenerateGrid();
             return;
         }
-        _gameConfig.GridWidth = _playerProgress.GridData.width;
-        _gameConfig.GridHeight = _playerProgress.GridData.height;
-
+        
         foreach (Transform child in _gridView.GetCardsParent())
         {
             Destroy(child.gameObject);
@@ -134,7 +140,7 @@ public class GridService : MonoBehaviour
         _cards.Clear();
         
         Transform cardsParent = _gridView.GetCardsParent();
-        int cardsCount = _gameConfig.GridWidth * _gameConfig.GridHeight;
+        int cardsCount = _playerProgress.GridData.width * _playerProgress.GridData.height;
         switch (_playerProgress.GridData.PoolType)
         {
             case PoolType.Colors:
@@ -150,7 +156,7 @@ public class GridService : MonoBehaviour
                 throw new ArgumentOutOfRangeException();
         }       
 
-        _gridView.SetupFixedWidth(_gameConfig.GridWidth);
+        _gridView.SetupFixedWidth(_playerProgress.GridData.width);
         Debug.Log("Grid data loaded.");
     }
     public List<CardView> GetAllCards()
@@ -160,20 +166,16 @@ public class GridService : MonoBehaviour
     
     public int GetTotalPairs()
     {
-        int cardsCount = _gameConfig.GridWidth * _gameConfig.GridHeight;
+        int cardsCount = _playerProgress.GridData.width * _playerProgress.GridData.height;
         return cardsCount / 2;
     }
 
-    private void OnApplicationQuit()
+    private void Save()
     {
-        _playerProgress.GridData = new GridData()
-        {
-            width = _gameConfig.GridWidth,
-            height = _gameConfig.GridHeight,
-            PoolType = _gameConfig.PoolType,
-            cards = new List<CardData>()
-        };
+        _playerProgress.HasProgress = true;
 
+        _playerProgress.GridData.cards = new List<CardData>();
+        
         for (int i = 0; i < _cards.Count; i++)
         {
             _playerProgress.GridData.cards.Add(new CardData()
@@ -183,11 +185,6 @@ public class GridService : MonoBehaviour
             });
         }
         
-        _messageBus.OnForceQuit?.Invoke();
-        
-        /*
-        string json = JsonUtility.ToJson(_playerProgress.GridData);
-        PlayerPrefs.SetString("GridData", json);
-        PlayerPrefs.Save();*/
+        _messageBus.OnForceSave?.Invoke();
     }
 }

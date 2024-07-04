@@ -6,6 +6,10 @@ namespace Infrastructure
     {
         public Action OnCardFlip;
         public Action<bool> OnCheckMatch;
-        public Action OnForceQuit;
+        public Action OnForceSaveGameData;
+        public Action<bool> OnGameOver;
+        public Action OnClearProgress;
+        
+        public Action OnForceSave;
     }
 }

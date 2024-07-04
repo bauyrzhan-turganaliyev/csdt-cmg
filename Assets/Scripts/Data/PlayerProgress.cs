@@ -8,6 +8,8 @@ public class PlayerProgress
     public ScoreData ScoreData;
     public GridData GridData;
 
+    public bool HasProgress;
+
     public PlayerProgress()
     {
         ScoreData = new ScoreData();
