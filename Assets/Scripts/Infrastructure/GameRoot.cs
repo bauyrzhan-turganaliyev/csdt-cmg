@@ -1,4 +1,5 @@
 using System;
+using Audio;
 using DefaultNamespace;
 using SaveLoad;
 using UnityEngine;
@@ -11,6 +12,7 @@ namespace Infrastructure
         [SerializeField] private GameController _gameController;
         [SerializeField] private ScoreService _scoreService;
         [SerializeField] private GameUIService _gameUIService;
+        [SerializeField] private AudioService _audioService;
         
         private PlayerProgress _playerProgress;
         private MessageBus _messageBus;
@@ -18,13 +20,15 @@ namespace Infrastructure
         private void Awake()
         {
             SetupPlayerProgress();
-
+            
             _messageBus = new MessageBus();
+            
             Subscribe();
 
             _gameController.Init(_messageBus, _playerProgress);
             _scoreService.Init(_messageBus, _playerProgress);
             _gameUIService.Init(_messageBus);
+            _audioService.Init(_messageBus);
         }
 
         private void Subscribe()
