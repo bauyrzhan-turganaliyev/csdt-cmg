@@ -2,15 +2,22 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Data;
 using DG.Tweening;
+using Grid;
 using Infrastructure;
+using Objects;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
     [SerializeField] private GridService _gridService;
+    [SerializeField] private float _waitSecondsBeforeClose = 2f;
+    [SerializeField] private float _waitSecondsBeforeCheck = 0.3f;
+    
     private readonly List<CardView> _openCards = new List<CardView>();
-    private int _pairsFound = 0;
+    
+    private int _pairsFound;
     private int _totalPairs;
     
     private MessageBus _messageBus;
@@ -86,12 +93,15 @@ public class GameController : MonoBehaviour
             _openCards[1].DisableCard();
             _pairsFound++;
             CheckForWin();
+            
+            yield return new WaitForSeconds(_waitSecondsBeforeCheck);
             _messageBus.OnCheckMatch?.Invoke(true);
         }
         else
         {
+            yield return new WaitForSeconds(_waitSecondsBeforeCheck);
             _messageBus.OnCheckMatch?.Invoke(false);
-            yield return new WaitForSeconds(2);
+            yield return new WaitForSeconds(_waitSecondsBeforeClose);
             CloseOpenCards();
         }
 

@@ -1,115 +1,117 @@
 using System;
-using System.Collections;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CardView : MonoBehaviour
+namespace Objects
 {
-    [SerializeField] private Button _button;
-    [SerializeField] private GameObject _backSide;
-    [SerializeField] private GameObject _frontSide;
-    [SerializeField] private Image _image;
-    [SerializeField] private TMP_Text _text;
-
-    public Action OnClick;
-    private object _value;
-    private bool isFlipping = false;
-    private bool isFront = false;
-    private bool _isMatched;
-
-    public void Init<T>(T value)
+    public class CardView : MonoBehaviour
     {
-        _button.onClick.AddListener(OnClicked);
-        _value = value;
-        SetupContent(value);
-    }
+        [SerializeField] private Button _button;
+        [SerializeField] private GameObject _backSide;
+        [SerializeField] private GameObject _frontSide;
+        [SerializeField] private Image _image;
+        [SerializeField] private TMP_Text _text;
 
-    private void SetupContent<T>(T value)
-    {
-        switch (value)
+        public Action OnClick;
+        private object _value;
+        private bool isFlipping = false;
+        private bool isFront = false;
+        private bool _isMatched;
+
+        public void Init<T>(T value)
         {
-            case Color color:
-                _image.color = color;
-                break;
-            case Sprite sprite:
-                _image.sprite = sprite;
-                break;
-            case string symbols:
-                _text.text = symbols;
-                break;
+            _button.onClick.AddListener(OnClicked);
+            _value = value;
+            SetupContent(value);
         }
-    }
 
-    private void OnClicked()
-    {
-        if (isFlipping) return;
-        FlipCard();
-        OnClick?.Invoke();
-    }
-
-    public object GetValue()
-    {
-        return _value;
-    }
-
-    public void ShowCard()
-    {
-        if (!isFront)
+        private void SetupContent<T>(T value)
         {
+            switch (value)
+            {
+                case Color color:
+                    _image.color = color;
+                    break;
+                case Sprite sprite:
+                    _image.sprite = sprite;
+                    break;
+                case string symbols:
+                    _text.text = symbols;
+                    break;
+            }
+        }
+
+        private void OnClicked()
+        {
+            if (isFlipping) return;
             FlipCard();
+            OnClick?.Invoke();
         }
-    }
 
-    public void FlipCard()
-    {
-        isFlipping = true;
+        public object GetValue()
+        {
+            return _value;
+        }
 
-        Sequence flipSequence = DOTween.Sequence();
-        flipSequence.Append(transform.DORotate(new Vector3(0, 90, 0), 0.25f))
-                     .AppendCallback(() => 
-                     {
-                         isFront = !isFront;
-                         _frontSide.SetActive(!isFront);
-                         _backSide.SetActive(isFront);
-                     })
-                     .Append(transform.DORotate(new Vector3(0, 180, 0), 0.25f))
-                     .AppendCallback(() => isFlipping = false);
-    }
+        public void ShowCard()
+        {
+            if (!isFront)
+            {
+                FlipCard();
+            }
+        }
 
-    public void ReverseIsFront()
-    {
-        isFront = !isFront;
-    }
+        public void FlipCard()
+        {
+            isFlipping = true;
 
-    public void HideCard()
-    {
-        Sequence flipBackSequence = DOTween.Sequence();
-        flipBackSequence.Append(transform.DORotate(new Vector3(0, 90, 0), 0.25f))
-                        .AppendCallback(() =>
-                        {
-                            isFront = !isFront;
-                            _frontSide.SetActive(!isFront);
-                            _backSide.SetActive(isFront);
-                        })
-                        .Append(transform.DORotate(new Vector3(0, 0, 0), 0.25f))
-                        .AppendCallback(() => isFlipping = false);
-    }
+            Sequence flipSequence = DOTween.Sequence();
+            flipSequence.Append(transform.DORotate(new Vector3(0, 90, 0), 0.25f))
+                .AppendCallback(() => 
+                {
+                    isFront = !isFront;
+                    _frontSide.SetActive(!isFront);
+                    _backSide.SetActive(isFront);
+                })
+                .Append(transform.DORotate(new Vector3(0, 180, 0), 0.25f))
+                .AppendCallback(() => isFlipping = false);
+        }
 
-    public void DisableCard()
-    {
-        _button.interactable = false;
-        _isMatched = true;
-    }
+        public void ReverseIsFront()
+        {
+            isFront = !isFront;
+        }
 
-    public bool IsMatched()
-    {
-        return _isMatched;
-    }
+        public void HideCard()
+        {
+            Sequence flipBackSequence = DOTween.Sequence();
+            flipBackSequence.Append(transform.DORotate(new Vector3(0, 90, 0), 0.25f))
+                .AppendCallback(() =>
+                {
+                    isFront = !isFront;
+                    _frontSide.SetActive(!isFront);
+                    _backSide.SetActive(isFront);
+                })
+                .Append(transform.DORotate(new Vector3(0, 0, 0), 0.25f))
+                .AppendCallback(() => isFlipping = false);
+        }
 
-    private void OnDestroy()
-    {
-        OnClick = null;
+        public void DisableCard()
+        {
+            _button.interactable = false;
+            _isMatched = true;
+        }
+
+        public bool IsMatched()
+        {
+            return _isMatched;
+        }
+
+        private void OnDestroy()
+        {
+            OnClick = null;
+        }
     }
 }

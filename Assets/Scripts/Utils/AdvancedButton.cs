@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Infrastructure
+namespace Utils
 {
     public class AdvancedButton : MonoBehaviour
     {

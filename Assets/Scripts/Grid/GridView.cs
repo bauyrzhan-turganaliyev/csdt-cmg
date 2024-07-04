@@ -1,53 +1,56 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GridView : MonoBehaviour
+namespace Grid
 {
-    [SerializeField] private GridLayoutGroup _gridLayoutGroup;
-    [SerializeField] private RectTransform _cardsParent;
-    [SerializeField] private float _maxCellSize = 250;
-
-    private void Start()
+    public class GridView : MonoBehaviour
     {
-        UpdateCellSize();
-    }
+        [SerializeField] private GridLayoutGroup _gridLayoutGroup;
+        [SerializeField] private RectTransform _cardsParent;
+        [SerializeField] private float _maxCellSize = 250;
 
-    public void SetupFixedWidth(int width)
-    {
-        _gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-        _gridLayoutGroup.constraintCount = width;
-        UpdateCellSize();
-    }
+        private void Start()
+        {
+            UpdateCellSize();
+        }
 
-    public Transform GetCardsParent()
-    {
-        return _cardsParent;
-    }
+        public void SetupFixedWidth(int width)
+        {
+            _gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            _gridLayoutGroup.constraintCount = width;
+            UpdateCellSize();
+        }
 
-    private void UpdateCellSize()
-    {
-        float parentWidth = _cardsParent.rect.width;
-        float parentHeight = _cardsParent.rect.height;
+        public Transform GetCardsParent()
+        {
+            return _cardsParent;
+        }
 
-        int width = _gridLayoutGroup.constraintCount;
+        private void UpdateCellSize()
+        {
+            float parentWidth = _cardsParent.rect.width;
+            float parentHeight = _cardsParent.rect.height;
 
-        float totalSpacingWidth = _gridLayoutGroup.spacing.x * (width - 1);
-        float totalPaddingWidth = _gridLayoutGroup.padding.left + _gridLayoutGroup.padding.right;
+            int width = _gridLayoutGroup.constraintCount;
 
-        float totalSpacingHeight = _gridLayoutGroup.spacing.y * (_cardsParent.childCount / width - 1);
-        float totalPaddingHeight = _gridLayoutGroup.padding.top + _gridLayoutGroup.padding.bottom;
+            float totalSpacingWidth = _gridLayoutGroup.spacing.x * (width - 1);
+            float totalPaddingWidth = _gridLayoutGroup.padding.left + _gridLayoutGroup.padding.right;
 
-        float availableWidth = parentWidth - totalSpacingWidth - totalPaddingWidth;
-        float availableHeight = parentHeight - totalSpacingHeight - totalPaddingHeight;
+            float totalSpacingHeight = _gridLayoutGroup.spacing.y * (_cardsParent.childCount / width - 1);
+            float totalPaddingHeight = _gridLayoutGroup.padding.top + _gridLayoutGroup.padding.bottom;
 
-        float cellSizeWidth = availableWidth / width;
-        float cellSizeHeight = availableHeight / (_cardsParent.childCount / width);
+            float availableWidth = parentWidth - totalSpacingWidth - totalPaddingWidth;
+            float availableHeight = parentHeight - totalSpacingHeight - totalPaddingHeight;
 
-        float cellSize = Mathf.Min(cellSizeWidth, cellSizeHeight);
+            float cellSizeWidth = availableWidth / width;
+            float cellSizeHeight = availableHeight / (_cardsParent.childCount / width);
+
+            float cellSize = Mathf.Min(cellSizeWidth, cellSizeHeight);
         
-        if (_maxCellSize > 100)
-            cellSize = Mathf.Min(cellSize, _maxCellSize);
+            if (_maxCellSize > 100)
+                cellSize = Mathf.Min(cellSize, _maxCellSize);
 
-        _gridLayoutGroup.cellSize = new Vector2(cellSize, cellSize);
+            _gridLayoutGroup.cellSize = new Vector2(cellSize, cellSize);
+        }
     }
 }

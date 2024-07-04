@@ -1,14 +1,17 @@
 using System;
 
-[Serializable]
-public class ScoreData
+namespace Data
 {
-    public int Score;
-    public int Flips;
-    public int Combo;
-
-    public ScoreData()
+    [Serializable]
+    public class ScoreData
     {
-        Combo = 1;
+        public int Score;
+        public int Flips;
+        public int Combo;
+
+        public ScoreData()
+        {
+            Combo = 1;
+        }
     }
 }

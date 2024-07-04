@@ -1,10 +1,12 @@
 using System;
 using Configs;
+using Data;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Utils;
 
-namespace Infrastructure
+namespace StartMenu
 {
     public class StartMenuView : MonoBehaviour
     {

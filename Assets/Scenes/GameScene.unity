@@ -1504,6 +1504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gridService: {fileID: 796641870}
+  _waitSecondsBeforeClose: 1
 --- !u!114 &796641874
 MonoBehaviour:
   m_ObjectHideFlags: 0

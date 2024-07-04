@@ -1,6 +1,7 @@
+using Data;
 using UnityEngine;
 
-namespace DefaultNamespace
+namespace SaveLoad
 {
     //[CreateAssetMenu(fileName = "PlayerProgress", menuName = "ScriptableObjects/PlayerProgress", order = 1)]
     public class PlayerProgressSO : ScriptableObject

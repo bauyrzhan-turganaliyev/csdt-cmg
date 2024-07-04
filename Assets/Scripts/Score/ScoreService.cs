@@ -1,64 +1,67 @@
-using System;
+using Data;
 using Infrastructure;
 using UnityEngine;
 
-public class ScoreService : MonoBehaviour
+namespace Score
 {
-    [SerializeField] private ScoreView _scoreView;
-    private MessageBus _messageBus;
-
-    private ScoreData _scoreData;
-    private PlayerProgress _playerProgress;
-
-    public void Init(MessageBus messageBus, PlayerProgress playerProgress)
+    public class ScoreService : MonoBehaviour
     {
-        _messageBus = messageBus;
-        _playerProgress = playerProgress;
+        [SerializeField] private ScoreView _scoreView;
+        private MessageBus _messageBus;
 
-        SetupAllViews();
-        Subscribe();
-    }
+        private ScoreData _scoreData;
+        private PlayerProgress _playerProgress;
 
-    private void Subscribe()
-    {
-        _messageBus.OnCardFlip += AddCardFlip;
-        _messageBus.OnCheckMatch += CheckMatch;
-    }
-
-    private void OnDestroy()
-    {
-        _messageBus.OnCardFlip -= AddCardFlip;
-        _messageBus.OnCheckMatch -= CheckMatch;
-    }
-
-    private void CheckMatch(bool isMatch)
-    {
-        if (isMatch)
+        public void Init(MessageBus messageBus, PlayerProgress playerProgress)
         {
-            _playerProgress.ScoreData.Score += 1 * _playerProgress.ScoreData.Combo;
-            _playerProgress.ScoreData.Combo++;
-            _scoreView.SetScore(_playerProgress.ScoreData.Score);
-        }
-        else
-        {
-            _playerProgress.ScoreData.Combo = 1;
-        }
-        
-        _scoreView.SetCombo(_playerProgress.ScoreData.Combo);
-    }
+            _messageBus = messageBus;
+            _playerProgress = playerProgress;
 
-    private void AddCardFlip()
-    {
-        if (_playerProgress == null || _playerProgress.ScoreData == null) return;
+            SetupAllViews();
+            Subscribe();
+        }
+
+        private void Subscribe()
+        {
+            _messageBus.OnCardFlip += AddCardFlip;
+            _messageBus.OnCheckMatch += CheckMatch;
+        }
+
+        private void OnDestroy()
+        {
+            _messageBus.OnCardFlip -= AddCardFlip;
+            _messageBus.OnCheckMatch -= CheckMatch;
+        }
+
+        private void CheckMatch(bool isMatch)
+        {
+            if (isMatch)
+            {
+                _playerProgress.ScoreData.Score += 1 * _playerProgress.ScoreData.Combo;
+                _playerProgress.ScoreData.Combo++;
+                _scoreView.SetScore(_playerProgress.ScoreData.Score);
+            }
+            else
+            {
+                _playerProgress.ScoreData.Combo = 1;
+            }
         
-        _playerProgress.ScoreData.Flips++;
-        _scoreView.SetFlips(_playerProgress.ScoreData.Flips);
-    }
+            _scoreView.SetCombo(_playerProgress.ScoreData.Combo);
+        }
+
+        private void AddCardFlip()
+        {
+            if (_playerProgress == null || _playerProgress.ScoreData == null) return;
+        
+            _playerProgress.ScoreData.Flips++;
+            _scoreView.SetFlips(_playerProgress.ScoreData.Flips);
+        }
     
-    private void SetupAllViews()
-    {
-        _scoreView.SetScore(_playerProgress.ScoreData.Score);
-        _scoreView.SetFlips(_playerProgress.ScoreData.Flips);
-        _scoreView.SetCombo(_playerProgress.ScoreData.Combo);
+        private void SetupAllViews()
+        {
+            _scoreView.SetScore(_playerProgress.ScoreData.Score);
+            _scoreView.SetFlips(_playerProgress.ScoreData.Flips);
+            _scoreView.SetCombo(_playerProgress.ScoreData.Combo);
+        }
     }
 }
