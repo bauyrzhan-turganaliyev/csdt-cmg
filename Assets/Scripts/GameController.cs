@@ -13,7 +13,6 @@ public class GameController : MonoBehaviour
 {
     [SerializeField] private GridService _gridService;
     [SerializeField] private float _waitSecondsBeforeClose = 2f;
-    [SerializeField] private float _waitSecondsBeforeCheck = 0.3f;
     
     private readonly List<CardView> _openCards = new List<CardView>();
     
@@ -94,12 +93,10 @@ public class GameController : MonoBehaviour
             _pairsFound++;
             CheckForWin();
             
-            yield return new WaitForSeconds(_waitSecondsBeforeCheck);
             _messageBus.OnCheckMatch?.Invoke(true);
         }
         else
         {
-            yield return new WaitForSeconds(_waitSecondsBeforeCheck);
             _messageBus.OnCheckMatch?.Invoke(false);
             yield return new WaitForSeconds(_waitSecondsBeforeClose);
             CloseOpenCards();
